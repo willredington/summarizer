@@ -7,11 +7,13 @@
     "baml-generate": "baml-cli generate",
     "build": "npm run baml-generate && tsc --build",
     "start": "npx ts-node-dev src/index.ts",
-    "dev": "nodemon --watch src --ext ts --exec 'npm run build'"
+    "dev": "nodemon --watch src --ext ts --exec 'npm run build'",
+    "install-local": "npm run build && npm link"
   },
   "dependencies": {
     "@boundaryml/baml": "^0.87.2",
     "@notionhq/client": "^3.0.1",
+    "@tryfabric/martian": "^1.2.4",
     "dotenv": "^16.4.5",
     "zod": "^3.25.20"
   },

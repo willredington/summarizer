@@ -47,8 +47,18 @@ export function get_checks<CheckName extends string>(checks: Record<CheckName, C
     return Object.values(checks)
 }
 export interface CodeExample {
-  codeExample: string
+  code: string
   language: string
+  description?: string | null
+  
+}
+
+export interface PracticalApplication {
+  relevanceScore: number
+  relevanceSummary: string
+  keyTakeaways: string[]
+  actionableItems?: string[] | null
+  relatedConcepts?: string[] | null
   
 }
 
@@ -56,7 +66,8 @@ export interface Section {
   title: string
   summary: string
   codeExamples?: CodeExample[] | null
-  mainBulletPoints?: string[] | null
+  keyPoints?: string[] | null
+  userRelevance?: string | null
   
 }
 
@@ -68,6 +79,6 @@ export interface SummaryResult {
   summary?: string | null
   tags?: string[] | null
   sections?: Section[] | null
-  practicalApplication?: string | null
+  practicalApplication?: PracticalApplication | null
   
 }

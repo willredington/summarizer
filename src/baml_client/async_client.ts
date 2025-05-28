@@ -20,7 +20,7 @@ import { toBamlError, BamlStream, type HTTPRequest } from "@boundaryml/baml"
 import type { Checked, Check, RecursivePartialNull as MovedRecursivePartialNull } from "./types"
 import type { partial_types } from "./partial_types"
 import type * as types from "./types"
-import type {CodeExample, Section, SummaryResult} from "./types"
+import type {CodeExample, PracticalApplication, Section, SummaryResult} from "./types"
 import type TypeBuilder from "./type_builder"
 import { AsyncHttpRequest, AsyncHttpStreamRequest } from "./async_request"
 import { LlmResponseParser, LlmStreamParser } from "./parser"
@@ -84,7 +84,7 @@ export class BamlAsyncClient {
 
   
   async GenerateSummary(
-      url: string,userProfileSynopsis: string,
+      url: string,userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): Promise<SummaryResult> {
     try {
@@ -93,7 +93,7 @@ export class BamlAsyncClient {
       const raw = await this.runtime.callFunction(
         "GenerateSummary",
         {
-          "url": url,"userProfileSynopsis": userProfileSynopsis
+          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         options.tb?.__tb(),
@@ -121,7 +121,7 @@ class BamlStreamClient {
 
   
   GenerateSummary(
-      url: string,userProfileSynopsis: string,
+      url: string,userRole: string,userProfileSynopsis: string,
       __baml_options__?: { tb?: TypeBuilder, clientRegistry?: ClientRegistry, collector?: Collector | Collector[] }
   ): BamlStream<partial_types.SummaryResult, SummaryResult> {
     try {
@@ -130,7 +130,7 @@ class BamlStreamClient {
       const raw = this.runtime.streamFunction(
         "GenerateSummary",
         {
-          "url": url,"userProfileSynopsis": userProfileSynopsis
+          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         undefined,
         this.ctxManager.cloneContext(),

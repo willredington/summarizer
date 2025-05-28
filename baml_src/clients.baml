@@ -12,7 +12,7 @@ client<llm> Anthropic {
   provider "anthropic"
   options {
     api_key env.ANTHROPIC_API_KEY
-    model "claude-3-7-sonnet-latest"
+    model "claude-opus-4-20250514"
     temperature 0.1
   }
 }

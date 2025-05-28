@@ -19,7 +19,7 @@ import type { BamlRuntime, BamlCtxManager, ClientRegistry, Image, Audio } from "
 import { toBamlError, HTTPRequest } from "@boundaryml/baml"
 import type { Checked, Check } from "./types"
 import type * as types from "./types"
-import type {CodeExample, Section, SummaryResult} from "./types"
+import type {CodeExample, PracticalApplication, Section, SummaryResult} from "./types"
 import type TypeBuilder from "./type_builder"
 
 type BamlCallOptions = {
@@ -32,14 +32,14 @@ export class HttpRequest {
 
   
   GenerateSummary(
-      url: string,userProfileSynopsis: string,
+      url: string,userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): HTTPRequest {
     try {
       return this.runtime.buildRequestSync(
         "GenerateSummary",
         {
-          "url": url,"userProfileSynopsis": userProfileSynopsis
+          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         __baml_options__?.tb?.__tb(),
@@ -58,14 +58,14 @@ export class HttpStreamRequest {
 
   
   GenerateSummary(
-      url: string,userProfileSynopsis: string,
+      url: string,userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): HTTPRequest {
     try {
       return this.runtime.buildRequestSync(
         "GenerateSummary",
         {
-          "url": url,"userProfileSynopsis": userProfileSynopsis
+          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         __baml_options__?.tb?.__tb(),

@@ -2,9 +2,15 @@
 
 import "dotenv/config";
 
+import { execSync } from "child_process";
+import { join } from "path";
+import { z } from "zod";
 import { b } from "./baml_client";
 import { cacheSummary, getCachedSummary } from "./util/cache";
-import { processSummaryResult } from "./util/notion";
+import { writeSummaryToFile } from "./util/file";
+
+const NOTION_PAGE_ID = z.string().parse(process.env.NOTION_PAGE_ID);
+const NOTION_TOKEN = z.string().parse(process.env.NOTION_TOKEN);
 
 type UserProfile = {
   name: string;
@@ -44,30 +50,45 @@ async function main() {
   }
   console.log("User profile found successfully");
 
-  // Check cache first
+  // Get summary either from cache or generate new one
+  let summary;
+
   const cachedSummary = getCachedSummary(url, userProfile.description);
+
   if (cachedSummary) {
     console.log("Found cached summary");
-    await processSummaryResult(cachedSummary);
-    console.log("Summary processed successfully");
-    console.log(`Wrote ${cachedSummary.url} to Notion`);
-    console.log("Process completed successfully");
-    return;
+    summary = cachedSummary;
+  } else {
+    console.log("Generating new summary...");
+    summary = await b.GenerateSummary(url, userProfile.description);
+    console.log("Summary generated successfully");
+    cacheSummary(url, userProfile.description, summary);
   }
 
-  console.log("Generating summary...");
-  const summary = await b.GenerateSummary(url, userProfile.description);
-  console.log("Summary generated successfully");
+  const outputDir = join(process.cwd(), "output");
+  const outputPath = join(
+    outputDir,
+    `${summary.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.md`
+  );
 
-  // Cache the new summary
-  cacheSummary(url, userProfile.description, summary);
-
-  console.log("Processing summary result...");
-  await processSummaryResult(summary);
+  writeSummaryToFile(summary, outputPath);
 
   console.log("Summary processed successfully");
-  console.log(`Wrote ${summary.url} to Notion`);
+  console.log(`Wrote ${url} to Notion`);
+  console.log(`Wrote summary to ${outputPath}`);
   console.log("Process completed successfully");
+
+  console.log("Uploading markdown files to notion");
+  try {
+    execSync(
+      `npx @vrerv/md-to-notion -t ${NOTION_TOKEN} -p ${NOTION_PAGE_ID} ${outputDir}`,
+      { stdio: "inherit" }
+    );
+    console.log("Successfully uploaded to Notion");
+  } catch (error) {
+    console.error("Failed to upload to Notion:", error);
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {

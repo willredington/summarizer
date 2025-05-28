@@ -19,7 +19,7 @@ import type { BamlRuntime, FunctionResult, BamlCtxManager, Image, Audio, ClientR
 import { toBamlError, type HTTPRequest } from "@boundaryml/baml"
 import type { Checked, Check, RecursivePartialNull as MovedRecursivePartialNull } from "./types"
 import type * as types from "./types"
-import type {CodeExample, Section, SummaryResult} from "./types"
+import type {CodeExample, PracticalApplication, Section, SummaryResult} from "./types"
 import type TypeBuilder from "./type_builder"
 import { HttpRequest, HttpStreamRequest } from "./sync_request"
 import { LlmResponseParser, LlmStreamParser } from "./parser"
@@ -86,7 +86,7 @@ export class BamlSyncClient {
 
   
   GenerateSummary(
-      url: string,userProfileSynopsis: string,
+      url: string,userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): SummaryResult {
     try {
@@ -95,7 +95,7 @@ export class BamlSyncClient {
       const raw = this.runtime.callFunctionSync(
         "GenerateSummary",
         {
-          "url": url,"userProfileSynopsis": userProfileSynopsis
+          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         options.tb?.__tb(),

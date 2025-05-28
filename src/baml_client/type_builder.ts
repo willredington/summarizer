@@ -22,9 +22,11 @@ import { DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME } from "./
 export default class TypeBuilder {
     private tb: _TypeBuilder;
     
-    CodeExample: ClassViewer<'CodeExample', "codeExample" | "language">;
+    CodeExample: ClassViewer<'CodeExample', "code" | "language" | "description">;
     
-    Section: ClassViewer<'Section', "title" | "summary" | "codeExamples" | "mainBulletPoints">;
+    PracticalApplication: ClassViewer<'PracticalApplication', "relevanceScore" | "relevanceSummary" | "keyTakeaways" | "actionableItems" | "relatedConcepts">;
+    
+    Section: ClassViewer<'Section', "title" | "summary" | "codeExamples" | "keyPoints" | "userRelevance">;
     
     SummaryResult: ClassViewer<'SummaryResult', "url" | "error" | "title" | "topic" | "summary" | "tags" | "sections" | "practicalApplication">;
     
@@ -33,7 +35,7 @@ export default class TypeBuilder {
     constructor() {
         this.tb = new _TypeBuilder({
           classes: new Set([
-            "CodeExample","Section","SummaryResult",
+            "CodeExample","PracticalApplication","Section","SummaryResult",
           ]),
           enums: new Set([
             
@@ -42,11 +44,15 @@ export default class TypeBuilder {
         });
         
         this.CodeExample = this.tb.classViewer("CodeExample", [
-          "codeExample","language",
+          "code","language","description",
+        ]);
+        
+        this.PracticalApplication = this.tb.classViewer("PracticalApplication", [
+          "relevanceScore","relevanceSummary","keyTakeaways","actionableItems","relatedConcepts",
         ]);
         
         this.Section = this.tb.classViewer("Section", [
-          "title","summary","codeExamples","mainBulletPoints",
+          "title","summary","codeExamples","keyPoints","userRelevance",
         ]);
         
         this.SummaryResult = this.tb.classViewer("SummaryResult", [
