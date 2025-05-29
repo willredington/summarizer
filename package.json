@@ -6,8 +6,7 @@
   "scripts": {
     "baml-generate": "baml-cli generate",
     "build": "npm run baml-generate && tsc --build",
-    "start": "npx ts-node-dev src/index.ts",
-    "dev": "nodemon --watch src --ext ts --exec 'npm run build'",
+    "start": "npm run build && npx ts-node-dev src/index.ts",
     "install-local": "npm run build && npm link"
   },
   "dependencies": {

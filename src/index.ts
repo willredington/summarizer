@@ -2,23 +2,19 @@
 
 import "dotenv/config";
 
-import { execSync } from "child_process";
-import { join } from "path";
-import { z } from "zod";
 import { b } from "./baml_client";
 import { cacheSummary, getCachedSummary } from "./util/cache";
-import { writeSummaryToFile } from "./util/file";
-
-const NOTION_PAGE_ID = z.string().parse(process.env.NOTION_PAGE_ID);
-const NOTION_TOKEN = z.string().parse(process.env.NOTION_TOKEN);
+import { createSummaryInNotion } from "./util/notion";
 
 type UserProfile = {
   name: string;
+  role: string;
   description: string;
 };
 
 const workUserProfile: UserProfile = {
   name: "work",
+  role: "Technical Architect and Senior Software Engineer",
   description: `I am a technical architect at a consulting firm.  My day-day to duties involve API design, creating internal tools in ruby, system design, devops, and general programming as necessary.
       I am skilled in most areas but ruby is a particularly new area for me. I have experience with python, java, javascript, typescript, and golang. 
       I know AWS fairly well but Azure is pretty lacking. In terms of devops I am familiar with Gitlab CI and Jenkins but not much else.
@@ -60,35 +56,19 @@ async function main() {
     summary = cachedSummary;
   } else {
     console.log("Generating new summary...");
-    summary = await b.GenerateSummary(url, userProfile.description);
+    summary = await b.GenerateSummary(
+      url,
+      userProfile.role,
+      userProfile.description
+    );
     console.log("Summary generated successfully");
     cacheSummary(url, userProfile.description, summary);
   }
 
-  const outputDir = join(process.cwd(), "output");
-  const outputPath = join(
-    outputDir,
-    `${summary.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.md`
-  );
-
-  writeSummaryToFile(summary, outputPath);
+  await createSummaryInNotion(summary);
 
   console.log("Summary processed successfully");
-  console.log(`Wrote ${url} to Notion`);
-  console.log(`Wrote summary to ${outputPath}`);
   console.log("Process completed successfully");
-
-  console.log("Uploading markdown files to notion");
-  try {
-    execSync(
-      `npx @vrerv/md-to-notion -t ${NOTION_TOKEN} -p ${NOTION_PAGE_ID} ${outputDir}`,
-      { stdio: "inherit" }
-    );
-    console.log("Successfully uploaded to Notion");
-  } catch (error) {
-    console.error("Failed to upload to Notion:", error);
-    process.exit(1);
-  }
 }
 
 main().catch((err) => {
