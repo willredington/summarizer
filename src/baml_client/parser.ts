@@ -20,7 +20,7 @@ import { toBamlError } from "@boundaryml/baml"
 import type { Checked, Check } from "./types"
 import type { partial_types } from "./partial_types"
 import type * as types from "./types"
-import type {CodeExample, PracticalApplication, Section, SummaryResult} from "./types"
+import type {CodeExample, Error, InputSearchResult, PracticalApplication, RelevanceResult, SearchResult, Section, SummaryResult} from "./types"
 import type TypeBuilder from "./type_builder"
 
 export class LlmResponseParser {
@@ -45,6 +45,24 @@ export class LlmResponseParser {
     }
   }
   
+  GetRelevantResults(
+      llmResponse: string,
+      __baml_options__?: { tb?: TypeBuilder, clientRegistry?: ClientRegistry }
+  ): RelevanceResult {
+    try {
+      return this.runtime.parseLlmResponse(
+        "GetRelevantResults",
+        llmResponse,
+        false,
+        this.ctxManager.cloneContext(),
+        __baml_options__?.tb?.__tb(),
+        __baml_options__?.clientRegistry,
+      ) as RelevanceResult
+    } catch (error) {
+      throw toBamlError(error);
+    }
+  }
+  
 }
 
 export class LlmStreamParser {
@@ -64,6 +82,24 @@ export class LlmStreamParser {
         __baml_options__?.tb?.__tb(),
         __baml_options__?.clientRegistry,
       ) as partial_types.SummaryResult
+    } catch (error) {
+      throw toBamlError(error);
+    }
+  }
+  
+  GetRelevantResults(
+      llmResponse: string,
+      __baml_options__?: { tb?: TypeBuilder, clientRegistry?: ClientRegistry }
+  ): partial_types.RelevanceResult {
+    try {
+      return this.runtime.parseLlmResponse(
+        "GetRelevantResults",
+        llmResponse,
+        true,
+        this.ctxManager.cloneContext(),
+        __baml_options__?.tb?.__tb(),
+        __baml_options__?.clientRegistry,
+      ) as partial_types.RelevanceResult
     } catch (error) {
       throw toBamlError(error);
     }

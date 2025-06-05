@@ -20,7 +20,7 @@ import { toBamlError, BamlStream, type HTTPRequest } from "@boundaryml/baml"
 import type { Checked, Check, RecursivePartialNull as MovedRecursivePartialNull } from "./types"
 import type { partial_types } from "./partial_types"
 import type * as types from "./types"
-import type {CodeExample, PracticalApplication, Section, SummaryResult} from "./types"
+import type {CodeExample, Error, InputSearchResult, PracticalApplication, RelevanceResult, SearchResult, Section, SummaryResult} from "./types"
 import type TypeBuilder from "./type_builder"
 import { AsyncHttpRequest, AsyncHttpStreamRequest } from "./async_request"
 import { LlmResponseParser, LlmStreamParser } from "./parser"
@@ -84,7 +84,7 @@ export class BamlAsyncClient {
 
   
   async GenerateSummary(
-      url: string,userRole: string,userProfileSynopsis: string,
+      searchResults: SearchResult[],userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): Promise<SummaryResult> {
     try {
@@ -93,7 +93,7 @@ export class BamlAsyncClient {
       const raw = await this.runtime.callFunction(
         "GenerateSummary",
         {
-          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
+          "searchResults": searchResults,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         options.tb?.__tb(),
@@ -101,6 +101,29 @@ export class BamlAsyncClient {
         collector,
       )
       return raw.parsed(false) as SummaryResult
+    } catch (error) {
+      throw toBamlError(error);
+    }
+  }
+  
+  async GetRelevantResults(
+      searchResults: InputSearchResult[],userProfileSynopsis: string,
+      __baml_options__?: BamlCallOptions
+  ): Promise<RelevanceResult> {
+    try {
+      const options = { ...this.bamlOptions, ...(__baml_options__ || {}) }
+      const collector = options.collector ? (Array.isArray(options.collector) ? options.collector : [options.collector]) : [];
+      const raw = await this.runtime.callFunction(
+        "GetRelevantResults",
+        {
+          "searchResults": searchResults,"userProfileSynopsis": userProfileSynopsis
+        },
+        this.ctxManager.cloneContext(),
+        options.tb?.__tb(),
+        options.clientRegistry,
+        collector,
+      )
+      return raw.parsed(false) as RelevanceResult
     } catch (error) {
       throw toBamlError(error);
     }
@@ -121,7 +144,7 @@ class BamlStreamClient {
 
   
   GenerateSummary(
-      url: string,userRole: string,userProfileSynopsis: string,
+      searchResults: SearchResult[],userRole: string,userProfileSynopsis: string,
       __baml_options__?: { tb?: TypeBuilder, clientRegistry?: ClientRegistry, collector?: Collector | Collector[] }
   ): BamlStream<partial_types.SummaryResult, SummaryResult> {
     try {
@@ -130,7 +153,7 @@ class BamlStreamClient {
       const raw = this.runtime.streamFunction(
         "GenerateSummary",
         {
-          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
+          "searchResults": searchResults,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
         },
         undefined,
         this.ctxManager.cloneContext(),
@@ -142,6 +165,35 @@ class BamlStreamClient {
         raw,
         (a): partial_types.SummaryResult => a,
         (a): SummaryResult => a,
+        this.ctxManager.cloneContext(),
+      )
+    } catch (error) {
+      throw toBamlError(error);
+    }
+  }
+  
+  GetRelevantResults(
+      searchResults: InputSearchResult[],userProfileSynopsis: string,
+      __baml_options__?: { tb?: TypeBuilder, clientRegistry?: ClientRegistry, collector?: Collector | Collector[] }
+  ): BamlStream<partial_types.RelevanceResult, RelevanceResult> {
+    try {
+      const options = { ...this.bamlOptions, ...(__baml_options__ || {}) }
+      const collector = options.collector ? (Array.isArray(options.collector) ? options.collector : [options.collector]) : [];
+      const raw = this.runtime.streamFunction(
+        "GetRelevantResults",
+        {
+          "searchResults": searchResults,"userProfileSynopsis": userProfileSynopsis
+        },
+        undefined,
+        this.ctxManager.cloneContext(),
+        options.tb?.__tb(),
+        options.clientRegistry,
+        collector,
+      )
+      return new BamlStream<partial_types.RelevanceResult, RelevanceResult>(
+        raw,
+        (a): partial_types.RelevanceResult => a,
+        (a): RelevanceResult => a,
         this.ctxManager.cloneContext(),
       )
     } catch (error) {

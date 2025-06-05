@@ -24,18 +24,26 @@ export default class TypeBuilder {
     
     CodeExample: ClassViewer<'CodeExample', "code" | "language" | "description">;
     
+    Error: ClassViewer<'Error', "url" | "error">;
+    
+    InputSearchResult: ClassViewer<'InputSearchResult', "url" | "title" | "content">;
+    
     PracticalApplication: ClassViewer<'PracticalApplication', "relevanceScore" | "relevanceSummary" | "keyTakeaways" | "actionableItems" | "relatedConcepts">;
     
-    Section: ClassViewer<'Section', "title" | "summary" | "codeExamples" | "keyPoints" | "userRelevance">;
+    RelevanceResult: ClassViewer<'RelevanceResult', "searchResults">;
     
-    SummaryResult: ClassViewer<'SummaryResult', "url" | "error" | "title" | "topic" | "summary" | "tags" | "sections" | "practicalApplication">;
+    SearchResult: ClassViewer<'SearchResult', "url" | "title" | "relevanceScore">;
+    
+    Section: ClassViewer<'Section', "title" | "summary" | "codeExamples" | "keyPoints" | "userRelevance" | "refernceUrls">;
+    
+    SummaryResult: ClassViewer<'SummaryResult', "urls" | "errors" | "title" | "topic" | "summary" | "tags" | "sections" | "practicalApplication">;
     
     
 
     constructor() {
         this.tb = new _TypeBuilder({
           classes: new Set([
-            "CodeExample","PracticalApplication","Section","SummaryResult",
+            "CodeExample","Error","InputSearchResult","PracticalApplication","RelevanceResult","SearchResult","Section","SummaryResult",
           ]),
           enums: new Set([
             
@@ -47,16 +55,32 @@ export default class TypeBuilder {
           "code","language","description",
         ]);
         
+        this.Error = this.tb.classViewer("Error", [
+          "url","error",
+        ]);
+        
+        this.InputSearchResult = this.tb.classViewer("InputSearchResult", [
+          "url","title","content",
+        ]);
+        
         this.PracticalApplication = this.tb.classViewer("PracticalApplication", [
           "relevanceScore","relevanceSummary","keyTakeaways","actionableItems","relatedConcepts",
         ]);
         
+        this.RelevanceResult = this.tb.classViewer("RelevanceResult", [
+          "searchResults",
+        ]);
+        
+        this.SearchResult = this.tb.classViewer("SearchResult", [
+          "url","title","relevanceScore",
+        ]);
+        
         this.Section = this.tb.classViewer("Section", [
-          "title","summary","codeExamples","keyPoints","userRelevance",
+          "title","summary","codeExamples","keyPoints","userRelevance","refernceUrls",
         ]);
         
         this.SummaryResult = this.tb.classViewer("SummaryResult", [
-          "url","error","title","topic","summary","tags","sections","practicalApplication",
+          "urls","errors","title","topic","summary","tags","sections","practicalApplication",
         ]);
         
         

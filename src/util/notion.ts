@@ -21,13 +21,6 @@ export class NotionSummaryCreator {
   }
 
   async createSummaryContent(summaryResult: SummaryResult) {
-    // Handle error case
-    if (summaryResult.error) {
-      throw new Error(
-        `Cannot create content due to error: ${summaryResult.error}`
-      );
-    }
-
     const subPageId = await this.createSubPage(summaryResult);
 
     // Remove any dashes from the ID as Notion uses a different format
@@ -80,9 +73,9 @@ export class NotionSummaryCreator {
             type: "title",
             title: {},
           },
-          "Source URL": {
-            type: "url",
-            url: {},
+          "Source URLs": {
+            type: "rich_text",
+            rich_text: {},
           },
           Tags: {
             type: "multi_select",
@@ -150,9 +143,11 @@ export class NotionSummaryCreator {
             },
           ],
         },
-        "Source URL": {
-          type: "url",
-          url: summaryResult.url,
+        "Source URLs": {
+          type: "rich_text",
+          rich_text: summaryResult.urls.map((url) => ({
+            text: { content: url },
+          })),
         },
         Tags: {
           type: "multi_select",
@@ -182,23 +177,7 @@ export class NotionSummaryCreator {
         rich_text: [
           {
             text: {
-              content: "Source URL",
-            },
-          },
-        ],
-        children: [
-          {
-            object: "block",
-            type: "embed",
-            embed: {
-              url: summaryResult.url,
-              caption: [
-                {
-                  text: {
-                    content: "Source URL",
-                  },
-                },
-              ],
+              content: `Source URLs: ${summaryResult.urls.join(", ")}`,
             },
           },
         ],

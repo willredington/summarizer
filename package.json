@@ -12,6 +12,7 @@
   "dependencies": {
     "@boundaryml/baml": "^0.87.2",
     "@notionhq/client": "^3.0.1",
+    "@tavily/core": "^0.5.3",
     "@tryfabric/martian": "^1.2.4",
     "dotenv": "^16.4.5",
     "zod": "^3.25.20"

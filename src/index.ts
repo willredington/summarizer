@@ -3,7 +3,7 @@
 import "dotenv/config";
 
 import { b } from "./baml_client";
-import { cacheSummary, getCachedSummary } from "./util/cache";
+import { search } from "./service/search";
 import { createSummaryInNotion } from "./util/notion";
 
 type UserProfile = {
@@ -28,13 +28,13 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length !== 2) {
-    console.error("Usage: <user-profile-name> <URL>");
+    console.error("Usage: <user-profile-name> <topic>");
     process.exit(1);
   }
 
-  const [userProfileName, url] = args;
+  const [userProfileName, topic] = args;
   console.log(`Processing request for profile: ${userProfileName}`);
-  console.log(`Target URL: ${url}`);
+  console.log(`Topic: ${topic}`);
 
   const userProfile = userProfiles.find(
     (profile) => profile.name === userProfileName
@@ -44,26 +44,33 @@ async function main() {
     console.error(`Could not find user profile: ${userProfileName}`);
     process.exit(1);
   }
+
   console.log("User profile found successfully");
 
-  // Get summary either from cache or generate new one
-  let summary;
+  const tavilySearchResults = await search(topic);
+  console.log(`Found ${tavilySearchResults.length} search results`);
 
-  const cachedSummary = getCachedSummary(url, userProfile.description);
+  const searchResults = tavilySearchResults.map((result) => ({
+    url: result.url,
+    title: result.title,
+    content: result.content,
+  }));
 
-  if (cachedSummary) {
-    console.log("Found cached summary");
-    summary = cachedSummary;
-  } else {
-    console.log("Generating new summary...");
-    summary = await b.GenerateSummary(
-      url,
-      userProfile.role,
-      userProfile.description
-    );
-    console.log("Summary generated successfully");
-    cacheSummary(url, userProfile.description, summary);
-  }
+  const relevantResults = await b.GetRelevantResults(
+    searchResults,
+    userProfile.description
+  );
+
+  console.log("Relevant results:", relevantResults.searchResults);
+
+  console.log("Generating new summary...");
+  const summary = await b.GenerateSummary(
+    relevantResults.searchResults,
+    userProfile.role,
+    userProfile.description
+  );
+
+  console.log("Summary generated successfully");
 
   await createSummaryInNotion(summary);
 

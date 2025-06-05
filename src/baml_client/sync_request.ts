@@ -19,7 +19,7 @@ import type { BamlRuntime, BamlCtxManager, ClientRegistry, Image, Audio } from "
 import { toBamlError, HTTPRequest } from "@boundaryml/baml"
 import type { Checked, Check } from "./types"
 import type * as types from "./types"
-import type {CodeExample, PracticalApplication, Section, SummaryResult} from "./types"
+import type {CodeExample, Error, InputSearchResult, PracticalApplication, RelevanceResult, SearchResult, Section, SummaryResult} from "./types"
 import type TypeBuilder from "./type_builder"
 
 type BamlCallOptions = {
@@ -32,14 +32,34 @@ export class HttpRequest {
 
   
   GenerateSummary(
-      url: string,userRole: string,userProfileSynopsis: string,
+      searchResults: SearchResult[],userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): HTTPRequest {
     try {
       return this.runtime.buildRequestSync(
         "GenerateSummary",
         {
-          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
+          "searchResults": searchResults,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
+        },
+        this.ctxManager.cloneContext(),
+        __baml_options__?.tb?.__tb(),
+        __baml_options__?.clientRegistry,
+        false,
+      )
+    } catch (error) {
+      throw toBamlError(error);
+    }
+  }
+  
+  GetRelevantResults(
+      searchResults: InputSearchResult[],userProfileSynopsis: string,
+      __baml_options__?: BamlCallOptions
+  ): HTTPRequest {
+    try {
+      return this.runtime.buildRequestSync(
+        "GetRelevantResults",
+        {
+          "searchResults": searchResults,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         __baml_options__?.tb?.__tb(),
@@ -58,14 +78,34 @@ export class HttpStreamRequest {
 
   
   GenerateSummary(
-      url: string,userRole: string,userProfileSynopsis: string,
+      searchResults: SearchResult[],userRole: string,userProfileSynopsis: string,
       __baml_options__?: BamlCallOptions
   ): HTTPRequest {
     try {
       return this.runtime.buildRequestSync(
         "GenerateSummary",
         {
-          "url": url,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
+          "searchResults": searchResults,"userRole": userRole,"userProfileSynopsis": userProfileSynopsis
+        },
+        this.ctxManager.cloneContext(),
+        __baml_options__?.tb?.__tb(),
+        __baml_options__?.clientRegistry,
+        true,
+      )
+    } catch (error) {
+      throw toBamlError(error);
+    }
+  }
+  
+  GetRelevantResults(
+      searchResults: InputSearchResult[],userProfileSynopsis: string,
+      __baml_options__?: BamlCallOptions
+  ): HTTPRequest {
+    try {
+      return this.runtime.buildRequestSync(
+        "GetRelevantResults",
+        {
+          "searchResults": searchResults,"userProfileSynopsis": userProfileSynopsis
         },
         this.ctxManager.cloneContext(),
         __baml_options__?.tb?.__tb(),

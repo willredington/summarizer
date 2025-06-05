@@ -53,6 +53,19 @@ export interface CodeExample {
   
 }
 
+export interface Error {
+  url: string
+  error: string
+  
+}
+
+export interface InputSearchResult {
+  url: string
+  title: string
+  content: string
+  
+}
+
 export interface PracticalApplication {
   relevanceScore: number
   relevanceSummary: string
@@ -62,18 +75,31 @@ export interface PracticalApplication {
   
 }
 
+export interface RelevanceResult {
+  searchResults: SearchResult[]
+  
+}
+
+export interface SearchResult {
+  url: string
+  title: string
+  relevanceScore?: number | null
+  
+}
+
 export interface Section {
   title: string
   summary: string
   codeExamples?: CodeExample[] | null
   keyPoints?: string[] | null
   userRelevance?: string | null
+  refernceUrls?: string[] | null
   
 }
 
 export interface SummaryResult {
-  url: string
-  error?: string | null
+  urls: string[]
+  errors?: Error[] | null
   title?: string | null
   topic?: string | null
   summary?: string | null
